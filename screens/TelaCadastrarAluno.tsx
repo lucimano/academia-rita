@@ -6,52 +6,43 @@ import {
   StyleSheet,
   TouchableOpacity,
   Switch,
-  Platform,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function TelaCadastrarAluno({ navigation }) {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [cpf, setCpf] = useState("");
-  const [dataCadastro, setDataCadastro] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dataCadastro, setDataCadastro] = useState(""); 
   const [statusPago, setStatusPago] = useState(false);
 
-  const onChangeData = (event, selectedDate) => {
-    // 1. Sempre feche o seletor, não importa o que aconteça.
-    setShowDatePicker(false);
-
-    // 2. Verifique se o usuário selecionou uma data (em vez de cancelar)
-    // O 'event.type === "set"' confirma que o usuário apertou "OK" no Android
-    if (event.type === "set" && selectedDate) {
-      // 3. Atualize o estado apenas se houver uma nova data
-      setDataCadastro(selectedDate);
-    }
-    // Se o usuário 'cancelou' (dismissed), o seletor fecha
-    // e a data antiga (new Date()) é mantida.
-  };
-
   const handleCpfChange = (text) => {
-    // Remove tudo que não é número
     const numericValue = text.replace(/\D/g, "");
-
-    // Limita a 11 dígitos
     const truncatedValue = numericValue.substring(0, 11);
-
-    // Aplica a máscara (xxx.xxx.xxx-xx)
     let formattedValue = truncatedValue;
-    // Adiciona o primeiro ponto
     formattedValue = formattedValue.replace(/(\d{3})(\d)/, "$1.$2");
-    // Adiciona o segundo ponto
     formattedValue = formattedValue.replace(/(\d{3})\.(\d{3})(\d)/, "$1.$2.$3");
-    // Adiciona o traço
     formattedValue = formattedValue.replace(
       /(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/,
       "$1.$2.$3-$4"
     );
-
     setCpf(formattedValue);
+  };
+
+  // Função para máscara de data (DD/MM/AAAA)
+  const handleDataChange = (text) => {
+    // Remove tudo que não é número
+    const numericValue = text.replace(/\D/g, "");
+    // Limita a 8 dígitos
+    const truncatedValue = numericValue.substring(0, 8);
+
+    // Aplica a máscara (DD/MM/AAAA)
+    let formattedValue = truncatedValue;
+    // Adiciona a primeira barra
+    formattedValue = formattedValue.replace(/(\d{2})(\d)/, "$1/$2");
+    // Adiciona a segunda barra
+    formattedValue = formattedValue.replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
+
+    setDataCadastro(formattedValue);
   };
 
   return (
@@ -81,22 +72,14 @@ export default function TelaCadastrarAluno({ navigation }) {
         />
 
         <Text style={styles.label}>Data de cadastro:</Text>
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          style={styles.input}
-        >
-          <Text>{dataCadastro.toLocaleDateString("pt-BR")}</Text>
-        </TouchableOpacity>
-
-        {showDatePicker && (
-          <DateTimePicker
-            testID="dateTimePicker"
+        <TextInput
+            style={styles.input}
+            placeholder="DD/MM/AAAA"
             value={dataCadastro}
-            mode={"date"}
-            display="default"
-            onChange={onChangeData}
-          />
-        )}
+            onChangeText={handleDataChange} // Usa a máscara de data
+            keyboardType="numeric"
+            maxLength={10}
+        />
 
         <View style={styles.switchContainer}>
           <Text style={styles.label}>Status:</Text>
