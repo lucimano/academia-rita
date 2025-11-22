@@ -86,6 +86,11 @@ export default function TelaCadastrarAluno({ navigation }) {
 
   return (
     <View style={styles.pageContainer}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnVoltar}>
+          <Text style={styles.txtBtnVoltar}>{"< Voltar"}</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.container}>
         <Text style={styles.label}>Nome do Aluno:</Text>
         <TextInput
@@ -154,12 +159,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
+  header: {
+    width: "100%",
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 1,
+  },
+  btnVoltar: {
+    padding: 10,
+  },
+  txtBtnVoltar: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
   container: {
     width: "100%",
     maxWidth: 500,
     backgroundColor: "#fdf5e6",
     padding: 20,
     borderRadius: 10,
+    marginTop: 60, // Space for header
   },
   label: {
     fontSize: 16,
