@@ -7,12 +7,13 @@ import {
   TouchableOpacity,
   Switch,
 } from "react-native";
+import axios from 'axios';
 
 export default function TelaCadastrarAluno({ navigation }) {
   const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
   const [cpf, setCpf] = useState("");
-  const [dataCadastro, setDataCadastro] = useState(""); 
+  const [dataCadastro, setDataCadastro] = useState("");
   const [statusPago, setStatusPago] = useState(false);
 
   const handleCpfChange = (text) => {
@@ -45,6 +46,44 @@ export default function TelaCadastrarAluno({ navigation }) {
     setDataCadastro(formattedValue);
   };
 
+  const handleCadastrar = async () => {
+    if (!nome || !email || !cpf) {
+      alert("Preencha Nome, Email e CPF!");
+      return;
+    }
+
+    try {
+      const apiUrl = "https://academia-back.onrender.com/alunos";
+
+      await axios.post(apiUrl, {
+        nome: nome,
+        email: email,
+        cpf: cpf,
+        data_cadastro: dataCadastro,
+        status: statusPago, // Envia true ou false direto
+      });
+
+      // 3. Se o código chegou aqui, é porque DEU CERTO (200 OK)
+      // O Axios joga erro automaticamente se der errado, então não precisa de "if (response.ok)"
+      alert("Aluno cadastrado com sucesso!");
+      navigation.goBack();
+
+    } catch (error) {
+      // 4. Tratamento de Erros Inteligente
+      if (error.response) {
+        // O servidor respondeu, mas com erro (ex: CPF duplicado)
+        console.log(error.response.data);
+        alert("Erro no cadastro: Verifique os dados ou se o CPF já existe.");
+      } else if (error.request) {
+        // A requisição saiu, mas não teve resposta (Servidor fora do ar)
+        alert("Erro de conexão: O servidor parece estar desligado.");
+      } else {
+        // Outro tipo de erro
+        alert("Ocorreu um erro inesperado.");
+      }
+    }
+  };
+
   return (
     <View style={styles.pageContainer}>
       <View style={styles.container}>
@@ -55,13 +94,13 @@ export default function TelaCadastrarAluno({ navigation }) {
           onChangeText={setNome}
         />
 
-        <Text style={styles.label}>Telefone/email:</Text>
+        <Text style={styles.label}>Email:</Text>
         <TextInput
           style={styles.input}
-          value={telefone}
-          onChangeText={setTelefone}
+          value={email}
+          onChangeText={setEmail}
         />
-        
+
         <Text style={styles.label}>CPF:</Text>
         <TextInput
           style={styles.input}
@@ -73,12 +112,12 @@ export default function TelaCadastrarAluno({ navigation }) {
 
         <Text style={styles.label}>Data de cadastro:</Text>
         <TextInput
-            style={styles.input}
-            placeholder="DD/MM/AAAA"
-            value={dataCadastro}
-            onChangeText={handleDataChange} // Usa a máscara de data
-            keyboardType="numeric"
-            maxLength={10}
+          style={styles.input}
+          placeholder="DD/MM/AAAA"
+          value={dataCadastro}
+          onChangeText={handleDataChange} // Usa a máscara de data
+          keyboardType="numeric"
+          maxLength={10}
         />
 
         <View style={styles.switchContainer}>
@@ -98,7 +137,7 @@ export default function TelaCadastrarAluno({ navigation }) {
 
         <TouchableOpacity
           style={styles.btnCadastrar}
-          onPress={() => navigation.navigate("TelaListaAlunos")}
+          onPress={handleCadastrar}
         >
           <Text style={{ color: "#fff" }}>Cadastrar</Text>
         </TouchableOpacity>
