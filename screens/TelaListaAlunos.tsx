@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -6,35 +7,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
 
-const alunos = [
-  {
-    id: 1,
-    nome: "João",
-    cpf: "1251252125",
-    email: "joao@email.com",
-    dataVenci: "12/05",
-    pagamento: "Pago",
-  },
-  {
-    id: 2,
-    nome: "Maria",
-    cpf: "123126845",
-    email: "maria@email.com",
-    dataVenci: "12/05",
-    pagamento: "Pendente",
-  },
-  {
-    id: 3,
-    nome: "Ana",
-    cpf: "21051275124",
-    email: "ana@email.com",
-    dataVenci: "12/05",
-    pagamento: "Pago",
-  },
-];
-
-export default function TelaListaAlunos({navigation}) {
+export default function TelaListaAlunos({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerBar} />
@@ -106,26 +81,26 @@ export default function TelaListaAlunos({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
   },
   headerBar: {
-    backgroundColor: "#003b5c", 
-    paddingVertical: 40, 
+    backgroundColor: "#003b5c",
+    paddingVertical: 40,
   },
   pageContainer: {
-    flex: 1, 
+    flex: 1,
     backgroundColor: "#ddd",
     padding: 10,
   },
   listWrapper: {
-    flex: 1, 
-    backgroundColor: "#fff", 
+    flex: 1,
+    backgroundColor: "#fff",
     borderRadius: 8,
-    overflow: "hidden", 
+    overflow: "hidden",
     marginBottom: 15,
   },
   cabecalho: {
-    backgroundColor: "#f1f1f1", 
+    backgroundColor: "#f1f1f1",
   },
   linha: {
     flexDirection: "row",
@@ -138,7 +113,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 4, 
+    paddingHorizontal: 4,
   },
   colButtons: {
     flex: 1,
@@ -148,16 +123,16 @@ const styles = StyleSheet.create({
   },
   txtCabecalho: {
     fontWeight: "bold",
-    fontSize: 12, 
+    fontSize: 12,
   },
   btnEditar: {
-    backgroundColor: "#e0e0e0", 
+    backgroundColor: "#e0e0e0",
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 5,
   },
   txtBtnEditar: {
-    color: "#333", 
+    color: "#333",
   },
   btnExcluir: {
     backgroundColor: "#d9534f",
@@ -166,11 +141,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   btnCadastrar: {
-    backgroundColor: "#003b5c", 
-    padding: 12, 
+    backgroundColor: "#003b5c",
+    padding: 12,
     borderRadius: 10,
     alignSelf: "center",
-    marginTop: "auto", 
+    marginTop: "auto",
     marginBottom: 10,
   },
 });
