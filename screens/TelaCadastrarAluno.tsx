@@ -13,7 +13,6 @@ export default function TelaCadastrarAluno({ navigation }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [cpf, setCpf] = useState("");
-  const [dataMensalidade, setDataMensalidade] = useState("");
   const [atividade, setAtividade] = useState(false);
   const [statusPago, setStatusPago] = useState(false);
 
@@ -43,7 +42,6 @@ export default function TelaCadastrarAluno({ navigation }) {
         nome: nome,
         email: email,
         cpf: cpf,
-        data_cadastro: dataMensalidade,
         status: atividade,
         pagamento: statusPago,
       });

@@ -17,14 +17,26 @@ interface Aluno {
   nome: string;
   cpf: string;
   email: string;
-  data_vencimento?: string;
-  atividade: boolean;
+  data_inicio?: string;
   status: boolean;
+  statusPagamento: boolean;
 }
 
 export default function TelaListaAlunos({ navigation }) {
   const [alunos, setAlunos] = useState<Aluno[]>([]);
   const [searchText, setSearchText] = useState("");
+
+  const calculateDueDate = (dataInicio: string | undefined) => {
+    if (!dataInicio) return "-";
+    const date = new Date(dataInicio);
+    if (isNaN(date.getTime())) return "-";
+
+    // Add 30 days
+    date.setDate(date.getDate() + 30);
+
+    // Format to DD/MM/YYYY
+    return date.toLocaleDateString("pt-BR");
+  };
 
   const fetchAlunos = async (query = "") => {
     try {
@@ -106,7 +118,10 @@ export default function TelaListaAlunos({ navigation }) {
               <Text style={styles.txtCabecalho}>Email</Text>
             </View>
             <View style={styles.coluna}>
-              <Text style={styles.txtCabecalho}>Data Vencimento</Text>
+              <Text style={styles.txtCabecalho}>Status</Text>
+            </View>
+            <View style={styles.coluna}>
+              <Text style={styles.txtCabecalho}>Data de Vencimento</Text>
             </View>
             <View style={styles.coluna}>
               <Text style={styles.txtCabecalho}>Pagamento</Text>
@@ -127,15 +142,20 @@ export default function TelaListaAlunos({ navigation }) {
                   <Text>{aluno.email}</Text>
                 </View>
                 <View style={styles.coluna}>
-                  <Text>{aluno.data_vencimento || "-"}</Text>
-                </View>
-
-                <View style={styles.coluna}>
                   <Text>
-                    {aluno.status ? "Pago" : "Pendente"}
+                    {aluno.status ? "Ativo" : "Inativo"}
                   </Text>
                 </View>
-
+                <View style={styles.coluna}>
+                  <Text>
+                    {calculateDueDate(aluno.data_inicio)}
+                  </Text>
+                </View>
+                <View style={styles.coluna}>
+                  <Text>
+                    {aluno.statusPagamento ? "Pago" : "Pendente"}
+                  </Text>
+                </View>
                 <View style={styles.colButtons}>
                   <TouchableOpacity
                     style={styles.btnEditar}

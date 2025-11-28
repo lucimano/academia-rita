@@ -6,57 +6,27 @@ import {
     StyleSheet,
     TouchableOpacity,
     Switch,
-    Alert,
+    Alert, // Importante para mensagens nativas
 } from "react-native";
 import axios from 'axios';
 
-export default function TelaEditarAluno({ navigation, route }) {
-    const { alunoId } = route.params; // Recebe o ID do aluno da tela anterior
+// Recebemos { route, navigation } para pegar os dados passados pela tela anterior
+export default function TelaEditarAluno({ route, navigation }) {
 
-    const [nome, setNome] = useState("");
-    const [email, setEmail] = useState("");
-    const [cpf, setCpf] = useState("");
-    const [dataMensalidade, setDataMensalidade] = useState("");
-    const [atividade, setAtividade] = useState(false);
-    const [statusPago, setStatusPago] = useState(false);
+    // 1. Pegamos o aluno que foi passado pela navegação
+    // Se não vier nada, usamos um objeto vazio {} para não quebrar
+    const { aluno } = route.params || {};
 
-    // Busca os dados do aluno ao carregar a tela
-    useEffect(() => {
-        const fetchAluno = async () => {
-            try {
-                // Tenta buscar o aluno específico pelo ID (se a API suportar)
-                // Se a API não tiver endpoint /alunos/:id, teremos que buscar todos e filtrar
-                // Assumindo que tem /alunos/:id ou vamos filtrar da lista geral se falhar
+    // 2. Inicializamos os estados COM OS DADOS DO ALUNO
+    const [nome, setNome] = useState(aluno?.nome || "");
+    const [email, setEmail] = useState(aluno?.email || "");
+    const [cpf, setCpf] = useState(aluno?.cpf || "");
 
-                // Opção 1: Tentar buscar direto pelo ID (Ideal)
-                // const response = await axios.get(`https://academia-back.onrender.com/alunos/${alunoId}`);
+    // Supondo que seu banco tenha essas colunas. Se vier null, assume false.
+    const [atividade, setAtividade] = useState(aluno?.ativo || false);
+    const [statusPago, setStatusPago] = useState(aluno?.status || false);
 
-                // Opção 2: Buscar todos e encontrar o certo (Mais garantido se não soubermos a API exata)
-                const response = await axios.get(`https://academia-back.onrender.com/alunos`);
-                const alunoEncontrado = response.data.find(a => a.id === alunoId);
-
-                if (alunoEncontrado) {
-                    setNome(alunoEncontrado.nome);
-                    setEmail(alunoEncontrado.email);
-                    setCpf(alunoEncontrado.cpf);
-                    setDataMensalidade(alunoEncontrado.data_cadastro || ""); // Ajuste conforme o nome do campo na API
-                    setAtividade(alunoEncontrado.status); // Ajuste conforme o nome do campo na API (status vs atividade)
-                    setStatusPago(alunoEncontrado.pagamento);
-                } else {
-                    Alert.alert("Erro", "Aluno não encontrado.");
-                    navigation.goBack();
-                }
-
-            } catch (error) {
-                console.error("Erro ao buscar dados do aluno:", error);
-                Alert.alert("Erro", "Não foi possível carregar os dados do aluno.");
-                navigation.goBack();
-            }
-        };
-
-        fetchAluno();
-    }, [alunoId]);
-
+    // Função de máscara de CPF (igual à de cadastro)
     const handleCpfChange = (text) => {
         const numericValue = text.replace(/\D/g, "");
         const truncatedValue = numericValue.substring(0, 11);
@@ -71,34 +41,33 @@ export default function TelaEditarAluno({ navigation, route }) {
     };
 
     const handleSalvar = async () => {
-        if (!nome || !email || !cpf) {
-            Alert.alert("Atenção", "Preencha Nome, Email e CPF!");
+        if (!nome || !cpf) {
+            Alert.alert("Atenção", "Nome e CPF são obrigatórios.");
             return;
         }
 
         try {
-            const apiUrl = `https://academia-back.onrender.com/alunos/${alunoId}`;
+            // ATENÇÃO: Precisa do ID na URL para saber quem atualizar
+            const apiUrl = `https://academia-back.onrender.com/alunos/${aluno.id}`;
 
+            // Usamos PUT para atualizar
             await axios.put(apiUrl, {
                 nome: nome,
                 email: email,
                 cpf: cpf,
-                data_cadastro: dataMensalidade,
-                status: atividade,
-                pagamento: statusPago,
+                ativo: atividade, // Verifica se no banco chama 'ativo' ou 'status'
+                status: statusPago,
             });
 
-            Alert.alert("Sucesso", "Dados do aluno atualizados!");
-            navigation.goBack();
+            Alert.alert("Sucesso", "Dados atualizados!");
+            navigation.goBack(); // Volta para a lista atualizada
 
         } catch (error) {
+            console.log(error);
             if (error.response) {
-                console.log(error.response.data);
-                Alert.alert("Erro ao salvar", "Verifique os dados e tente novamente.");
-            } else if (error.request) {
-                Alert.alert("Erro de conexão", "O servidor parece estar desligado.");
+                Alert.alert("Erro ao salvar", "Verifique os dados.");
             } else {
-                Alert.alert("Erro", "Ocorreu um erro inesperado.");
+                Alert.alert("Erro de conexão", "Não foi possível conectar ao servidor.");
             }
         }
     };
@@ -110,6 +79,7 @@ export default function TelaEditarAluno({ navigation, route }) {
                     <Text style={styles.txtBtnVoltar}>{"< Voltar"}</Text>
                 </TouchableOpacity>
             </View>
+
             <View style={styles.container}>
                 <Text style={styles.label}>Nome do Aluno:</Text>
                 <TextInput
@@ -132,6 +102,7 @@ export default function TelaEditarAluno({ navigation, route }) {
                     onChangeText={handleCpfChange}
                     keyboardType="numeric"
                     maxLength={14}
+                // CPF geralmente não se edita, talvez seja bom colocar editable={false}
                 />
 
                 <View style={styles.switchContainer}>
@@ -175,6 +146,7 @@ export default function TelaEditarAluno({ navigation, route }) {
     );
 }
 
+// Mantenha os seus estilos (styles) aqui embaixo igual estava...
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
@@ -204,7 +176,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fdf5e6",
         padding: 20,
         borderRadius: 10,
-        marginTop: 60, // Space for header
+        marginTop: 60,
     },
     label: {
         fontSize: 16,
