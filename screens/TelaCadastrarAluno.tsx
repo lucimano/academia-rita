@@ -13,7 +13,8 @@ export default function TelaCadastrarAluno({ navigation }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [cpf, setCpf] = useState("");
-  const [dataCadastro, setDataCadastro] = useState("");
+  const [dataMensalidade, setDataMensalidade] = useState("");
+  const [atividade, setAtividade] = useState(false);
   const [statusPago, setStatusPago] = useState(false);
 
   const handleCpfChange = (text) => {
@@ -29,23 +30,6 @@ export default function TelaCadastrarAluno({ navigation }) {
     setCpf(formattedValue);
   };
 
-  // Função para máscara de data (DD/MM/AAAA)
-  const handleDataChange = (text) => {
-    // Remove tudo que não é número
-    const numericValue = text.replace(/\D/g, "");
-    // Limita a 8 dígitos
-    const truncatedValue = numericValue.substring(0, 8);
-
-    // Aplica a máscara (DD/MM/AAAA)
-    let formattedValue = truncatedValue;
-    // Adiciona a primeira barra
-    formattedValue = formattedValue.replace(/(\d{2})(\d)/, "$1/$2");
-    // Adiciona a segunda barra
-    formattedValue = formattedValue.replace(/(\d{2})\/(\d{2})(\d)/, "$1/$2/$3");
-
-    setDataCadastro(formattedValue);
-  };
-
   const handleCadastrar = async () => {
     if (!nome || !email || !cpf) {
       alert("Preencha Nome, Email e CPF!");
@@ -59,8 +43,9 @@ export default function TelaCadastrarAluno({ navigation }) {
         nome: nome,
         email: email,
         cpf: cpf,
-        data_cadastro: dataCadastro,
-        status: statusPago, // Envia true ou false direto
+        data_cadastro: dataMensalidade,
+        status: atividade,
+        pagamento: statusPago,
       });
 
       // 3. Se o código chegou aqui, é porque DEU CERTO (200 OK)
@@ -115,18 +100,23 @@ export default function TelaCadastrarAluno({ navigation }) {
           maxLength={14}
         />
 
-        <Text style={styles.label}>Data de cadastro:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="DD/MM/AAAA"
-          value={dataCadastro}
-          onChangeText={handleDataChange} // Usa a máscara de data
-          keyboardType="numeric"
-          maxLength={10}
-        />
-
         <View style={styles.switchContainer}>
           <Text style={styles.label}>Status:</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ marginRight: 10, fontSize: 16 }}>
+              {atividade ? "Ativo" : "Inativo"}
+            </Text>
+            <Switch
+              trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
+              thumbColor={"#f4f3f4"}
+              onValueChange={() => setAtividade(!atividade)}
+              value={atividade}
+            />
+          </View>
+        </View>
+
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>Pagamento:</Text>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text style={{ marginRight: 10, fontSize: 16 }}>
               {statusPago ? "Pago" : "Pendente"}

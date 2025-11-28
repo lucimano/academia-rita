@@ -18,6 +18,7 @@ interface Aluno {
   cpf: string;
   email: string;
   data_vencimento?: string;
+  atividade: boolean;
   status: boolean;
 }
 
@@ -37,6 +38,33 @@ export default function TelaListaAlunos({ navigation }) {
       console.error("Erro ao buscar alunos:", error);
       Alert.alert("Erro", "Não foi possível carregar a lista de alunos.");
     }
+  };
+
+  const handleExcluir = (id: number) => {
+    Alert.alert(
+      "Confirmar Exclusão",
+      "Tem certeza que deseja excluir este aluno?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await axios.delete(`https://academia-back.onrender.com/alunos/${id}`);
+              Alert.alert("Sucesso", "Aluno excluído com sucesso!");
+              fetchAlunos(searchText); // Atualiza a lista
+            } catch (error) {
+              console.error("Erro ao excluir aluno:", error);
+              Alert.alert("Erro", "Não foi possível excluir o aluno.");
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Busca inicial e quando o texto de pesquisa muda
@@ -115,7 +143,10 @@ export default function TelaListaAlunos({ navigation }) {
                   >
                     <Text style={styles.txtBtnEditar}>Editar</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.btnExcluir}>
+                  <TouchableOpacity
+                    style={styles.btnExcluir}
+                    onPress={() => handleExcluir(aluno.id)}
+                  >
                     <Text style={{ color: "#fff" }}>Excluir</Text>
                   </TouchableOpacity>
                 </View>
