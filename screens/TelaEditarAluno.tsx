@@ -6,11 +6,10 @@ import {
     StyleSheet,
     TouchableOpacity,
     Switch,
-    Alert, // Importante para mensagens nativas
+    Alert,
 } from "react-native";
 import axios from 'axios';
 
-// Recebemos { route, navigation } para pegar os dados passados pela tela anterior
 export default function TelaEditarAluno({ route, navigation }) {
 
     // 1. Pegamos o aluno que foi passado pela navegação
@@ -21,12 +20,19 @@ export default function TelaEditarAluno({ route, navigation }) {
     const [nome, setNome] = useState(aluno?.nome || "");
     const [email, setEmail] = useState(aluno?.email || "");
     const [cpf, setCpf] = useState(aluno?.cpf || "");
+    const [atividade, setAtividade] = useState(aluno?.status || false);
+    const [statusPago, setStatusPago] = useState(aluno?.pagamento || false);
 
-    // Supondo que seu banco tenha essas colunas. Se vier null, assume false.
-    const [atividade, setAtividade] = useState(aluno?.ativo || false);
-    const [statusPago, setStatusPago] = useState(aluno?.status || false);
-
-    // Função de máscara de CPF (igual à de cadastro)
+    useEffect(() => {
+        if (aluno) {
+            setNome(aluno.nome || "");
+            setEmail(aluno.email || "");
+            setCpf(aluno.cpf || "");
+            setAtividade(aluno.status); // Pega do banco 'status'
+            setStatusPago(aluno.pagamento); // Pega do banco 'pagamento'
+        }
+    }, [aluno]);    
+    
     const handleCpfChange = (text) => {
         const numericValue = text.replace(/\D/g, "");
         const truncatedValue = numericValue.substring(0, 11);
@@ -55,12 +61,12 @@ export default function TelaEditarAluno({ route, navigation }) {
                 nome: nome,
                 email: email,
                 cpf: cpf,
-                ativo: atividade, // Verifica se no banco chama 'ativo' ou 'status'
-                status: statusPago,
+                status: atividade,
+                pagamento: statusPago,
             });
 
             Alert.alert("Sucesso", "Dados atualizados!");
-            navigation.goBack(); // Volta para a lista atualizada
+            navigation.goBack();
 
         } catch (error) {
             console.log(error);
@@ -102,7 +108,6 @@ export default function TelaEditarAluno({ route, navigation }) {
                     onChangeText={handleCpfChange}
                     keyboardType="numeric"
                     maxLength={14}
-                // CPF geralmente não se edita, talvez seja bom colocar editable={false}
                 />
 
                 <View style={styles.switchContainer}>
@@ -146,7 +151,6 @@ export default function TelaEditarAluno({ route, navigation }) {
     );
 }
 
-// Mantenha os seus estilos (styles) aqui embaixo igual estava...
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,

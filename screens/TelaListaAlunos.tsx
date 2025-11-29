@@ -159,7 +159,7 @@ export default function TelaListaAlunos({ navigation }) {
                 <View style={styles.colButtons}>
                   <TouchableOpacity
                     style={styles.btnEditar}
-                    onPress={() => navigation.navigate("TelaEditarAluno", { alunoId: aluno.id })}
+                    onPress={() => navigation.navigate("TelaEditarAluno", { aluno: aluno })}
                   >
                     <Text style={styles.txtBtnEditar}>Editar</Text>
                   </TouchableOpacity>
