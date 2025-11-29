@@ -19,7 +19,7 @@ interface Aluno {
   email: string;
   data_inicio?: string;
   status: boolean;
-  statusPagamento: boolean;
+  pagamento: boolean;
 }
 
 export default function TelaListaAlunos({ navigation }) {
@@ -152,8 +152,11 @@ export default function TelaListaAlunos({ navigation }) {
                   </Text>
                 </View>
                 <View style={styles.coluna}>
-                  <Text>
-                    {aluno.statusPagamento ? "Pago" : "Pendente"}
+                  <Text style={{ 
+                      color: aluno.pagamento ? 'green' : '#d9534f',
+                      fontWeight: 'bold' 
+                    }}>
+                    {aluno.pagamento ? "Pago" : "Pendente"}
                   </Text>
                 </View>
                 <View style={styles.colButtons}>
