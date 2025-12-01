@@ -107,7 +107,12 @@ export default function TelaCadastrarAluno({ navigation }) {
             <Switch
               trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
               thumbColor={"#f4f3f4"}
-              onValueChange={() => setAtividade(!atividade)}
+              onValueChange={(value) => {
+                setAtividade(value);
+                if (!value) {
+                  setStatusPago(false);
+                }
+              }}
               value={atividade}
             />
           </View>
@@ -122,7 +127,12 @@ export default function TelaCadastrarAluno({ navigation }) {
             <Switch
               trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
               thumbColor={"#f4f3f4"}
-              onValueChange={() => setStatusPago(!statusPago)}
+              onValueChange={(value) => {
+                setStatusPago(value);
+                if (value) {
+                  setAtividade(true);
+                }
+              }}
               value={statusPago}
             />
           </View>

@@ -31,8 +31,8 @@ export default function TelaEditarAluno({ route, navigation }) {
             setAtividade(aluno.status); // Pega do banco 'status'
             setStatusPago(aluno.pagamento); // Pega do banco 'pagamento'
         }
-    }, [aluno]);    
-    
+    }, [aluno]);
+
     const handleCpfChange = (text) => {
         const numericValue = text.replace(/\D/g, "");
         const truncatedValue = numericValue.substring(0, 11);
@@ -119,7 +119,12 @@ export default function TelaEditarAluno({ route, navigation }) {
                         <Switch
                             trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
                             thumbColor={"#f4f3f4"}
-                            onValueChange={() => setAtividade(!atividade)}
+                            onValueChange={(value) => {
+                                setAtividade(value);
+                                if (!value) {
+                                    setStatusPago(false);
+                                }
+                            }}
                             value={atividade}
                         />
                     </View>
@@ -134,7 +139,12 @@ export default function TelaEditarAluno({ route, navigation }) {
                         <Switch
                             trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
                             thumbColor={"#f4f3f4"}
-                            onValueChange={() => setStatusPago(!statusPago)}
+                            onValueChange={(value) => {
+                                setStatusPago(value);
+                                if (value) {
+                                    setAtividade(true);
+                                }
+                            }}
                             value={statusPago}
                         />
                     </View>
