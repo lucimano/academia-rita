@@ -6,6 +6,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   Switch,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from "react-native";
 import axios from 'axios';
 
@@ -68,88 +71,98 @@ export default function TelaCadastrarAluno({ navigation }) {
   };
 
   return (
-    <View style={styles.pageContainer}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnVoltar}>
-          <Text style={styles.txtBtnVoltar}>{"< Voltar"}</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.container}>
-        <Text style={styles.label}>Nome do Aluno:</Text>
-        <TextInput
-          style={styles.input}
-          value={nome}
-          onChangeText={setNome}
-        />
-
-        <Text style={styles.label}>Email:</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        <Text style={styles.label}>CPF:</Text>
-        <TextInput
-          style={styles.input}
-          value={cpf}
-          onChangeText={handleCpfChange}
-          keyboardType="numeric"
-          maxLength={14}
-        />
-
-        <View style={styles.switchContainer}>
-          <Text style={styles.label}>Status:</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ marginRight: 10, fontSize: 16 }}>
-              {atividade ? "Ativo" : "Inativo"}
-            </Text>
-            <Switch
-              trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
-              thumbColor={"#f4f3f4"}
-              onValueChange={(value) => {
-                setAtividade(value);
-                if (!value) {
-                  setStatusPago(false);
-                }
-              }}
-              value={atividade}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.pageContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.btnVoltar}>
+              <Text style={styles.txtBtnVoltar}>{"< Voltar"}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container}>
+            <Text style={styles.label}>Nome do Aluno:</Text>
+            <TextInput
+              style={styles.input}
+              value={nome}
+              onChangeText={setNome}
             />
+
+            <Text style={styles.label}>Email:</Text>
+            <TextInput
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+            />
+
+            <Text style={styles.label}>CPF:</Text>
+            <TextInput
+              style={styles.input}
+              value={cpf}
+              onChangeText={handleCpfChange}
+              keyboardType="numeric"
+              maxLength={14}
+            />
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Status:</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ marginRight: 10, fontSize: 16 }}>
+                  {atividade ? "Ativo" : "Inativo"}
+                </Text>
+                <Switch
+                  trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
+                  thumbColor={"#f4f3f4"}
+                  onValueChange={(value) => {
+                    setAtividade(value);
+                    if (!value) {
+                      setStatusPago(false);
+                    }
+                  }}
+                  value={atividade}
+                />
+              </View>
+            </View>
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Pagamento:</Text>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Text style={{ marginRight: 10, fontSize: 16 }}>
+                  {statusPago ? "Pago" : "Pendente"}
+                </Text>
+                <Switch
+                  trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
+                  thumbColor={"#f4f3f4"}
+                  onValueChange={(value) => {
+                    setStatusPago(value);
+                    if (value) {
+                      setAtividade(true);
+                    }
+                  }}
+                  value={statusPago}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.btnCadastrar}
+              onPress={handleCadastrar}
+            >
+              <Text style={{ color: "#fff" }}>Cadastrar</Text>
+            </TouchableOpacity>
           </View>
         </View>
-
-        <View style={styles.switchContainer}>
-          <Text style={styles.label}>Pagamento:</Text>
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ marginRight: 10, fontSize: 16 }}>
-              {statusPago ? "Pago" : "Pendente"}
-            </Text>
-            <Switch
-              trackColor={{ false: "#e0e0e0", true: "#003b5c" }}
-              thumbColor={"#f4f3f4"}
-              onValueChange={(value) => {
-                setStatusPago(value);
-                if (value) {
-                  setAtividade(true);
-                }
-              }}
-              value={statusPago}
-            />
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.btnCadastrar}
-          onPress={handleCadastrar}
-        >
-          <Text style={{ color: "#fff" }}>Cadastrar</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+  },
   pageContainer: {
     flex: 1,
     backgroundColor: "#003b5c",
