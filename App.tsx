@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TelaListaAlunos from "./screens/TelaListaAlunos";
 import TelaCadastrarAluno from "./screens/TelaCadastrarAluno";
 import TelaEditarAluno from "./screens/TelaEditarAluno";
+import TelaConciliacao from "./screens/TelaConciliacao";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,8 @@ export default function App() {
         <Stack.Screen name="TelaCadastrarAluno" component={TelaCadastrarAluno}>
         </Stack.Screen>
         <Stack.Screen name="TelaEditarAluno" component={TelaEditarAluno}>
+        </Stack.Screen>
+        <Stack.Screen name="TelaConciliacao" component={TelaConciliacao}>
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

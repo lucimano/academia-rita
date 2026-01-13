@@ -212,6 +212,10 @@ export default function TelaListaAlunos({ navigation }) {
         <TouchableOpacity style={styles.btnCadastrar} onPress={() => navigation.navigate("TelaCadastrarAluno")}>
           <Text style={{ color: "#fff", fontWeight: "bold" }}>+ Cadastrar Aluno</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.btnCadastrar, { backgroundColor: "#2e7d32", marginTop: 10 }]} onPress={() => navigation.navigate("TelaConciliacao")}>
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>$ Conciliação Bancária</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
