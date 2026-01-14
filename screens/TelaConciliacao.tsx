@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 
 export default function TelaConciliacao({ navigation }) {
@@ -35,25 +36,12 @@ export default function TelaConciliacao({ navigation }) {
         setLogs([]);
         setResumo(null);
 
-        const formData = new FormData();
-
-        // Conversão necessária para o React Native entender como arquivo
-        const fileToUpload = {
-            uri: file.uri,
-            name: file.name,
-            type: file.mimeType || 'text/csv', // Fallback se não detectar
-        };
-
-        // @ts-ignore: FormData no React Native aceita objeto como arquivo
-        formData.append('file', fileToUpload);
-
         try {
-            const response = await axios.post('https://academia-back.onrender.com/conciliacao', formData, {
-                headers: {
-                    'Accept': 'application/json',
-                },
-                // Garante que o FormData vá puro, sem o Axios tentar transformar em JSON
-                transformRequest: (data) => data, 
+            // Nova estratégia: Ler arquivo como texto e enviar JSON
+            const content = await FileSystem.readAsStringAsync(file.uri);
+
+            const response = await axios.post('https://academia-back.onrender.com/conciliacao', {
+                csvContent: content
             });
 
             const data = response.data;
@@ -66,7 +54,7 @@ export default function TelaConciliacao({ navigation }) {
             Alert.alert("Sucesso", `Processamento concluído!\nAtualizados: ${data.totalAtualizado}`);
 
         } catch (error) {
-            console.error("Erro no upload:", error);
+            console.error("Erro no upload/processamento:", error);
             Alert.alert("Erro", "Falha ao enviar o arquivo para o servidor.");
         } finally {
             setLoading(false);
