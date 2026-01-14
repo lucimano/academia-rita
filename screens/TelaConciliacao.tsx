@@ -50,8 +50,10 @@ export default function TelaConciliacao({ navigation }) {
         try {
             const response = await axios.post('https://academia-back.onrender.com/conciliacao', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
                 },
+                // Garante que o FormData vá puro, sem o Axios tentar transformar em JSON
+                transformRequest: (data) => data, 
             });
 
             const data = response.data;
