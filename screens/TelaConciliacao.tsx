@@ -84,18 +84,20 @@ export default function TelaConciliacao({ navigation }) {
                 </TouchableOpacity>
 
                 {resumo && (
-                    <View style={styles.resumoContainer}>
-                        <Text style={styles.resumoTitle}>Resumo do Processamento:</Text>
-                        <Text style={styles.resumoText}>Linhas Lidas: {resumo.totalLido}</Text>
-                        <Text style={styles.resumoText}>Pagamentos Confirmados: {resumo.totalAtualizado}</Text>
+                    <View style={styles.successCard}>
+                        <Text style={styles.successValue}>{resumo.totalAtualizado}</Text>
+                        <Text style={styles.successLabel}>Pagamentos Confirmados</Text>
                     </View>
                 )}
 
                 <View style={styles.logsContainer}>
-                    <Text style={styles.logsTitle}>Logs:</Text>
+                    <Text style={styles.logsTitle}>Alunos Identificados:</Text>
                     <ScrollView style={styles.logsScroll}>
                         {logs.length === 0 ? (
-                            <Text style={styles.noLogs}>Nenhum pagamento identificado neste envio.</Text>
+                            <Text style={styles.noLogs}>
+                                Nenhum aluno identificado neste arquivo. {'\n'}
+                                Verifique se o extrato contém CPFs válidos.
+                            </Text>
                         ) : (
                             logs.map((log, index) => (
                                 <Text key={index} style={styles.logItem}>{log}</Text>
@@ -153,25 +155,29 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    resumoContainer: {
-        backgroundColor: '#fff',
-        padding: 15,
-        borderRadius: 8,
+    successCard: {
+        backgroundColor: '#2e7d32', // Verde
+        padding: 20,
+        borderRadius: 12,
         marginBottom: 20,
-        borderLeftWidth: 5,
-        borderLeftColor: '#2e7d32', // Verde
-        elevation: 2,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 4,
     },
-    resumoTitle: {
-        fontSize: 16,
+    successValue: {
+        fontSize: 48,
         fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#333',
+        color: '#fff',
     },
-    resumoText: {
-        fontSize: 14,
-        color: '#555',
-        marginBottom: 4,
+    successLabel: {
+        fontSize: 16,
+        color: '#e8f5e9',
+        marginTop: 5,
+        fontWeight: '600',
     },
     logsContainer: {
         flex: 1,
@@ -198,10 +204,11 @@ const styles = StyleSheet.create({
         paddingBottom: 4,
     },
     noLogs: {
-        color: '#999',
-        fontStyle: 'italic',
+        color: '#757575',
         textAlign: 'center',
-        marginTop: 20,
+        marginTop: 30,
+        lineHeight: 22,
+        fontSize: 14,
     },
     btnVoltar: {
         marginTop: 20,
