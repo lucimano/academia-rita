@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, ActivityIndicator, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -38,7 +38,13 @@ export default function TelaConciliacao({ navigation }) {
 
         try {
             // Nova estratégia: Ler arquivo como texto e enviar JSON
-            const content = await FileSystem.readAsStringAsync(file.uri);
+            let content;
+            if (Platform.OS === 'web') {
+                const res = await fetch(file.uri);
+                content = await res.text();
+            } else {
+                content = await FileSystem.readAsStringAsync(file.uri);
+            }
 
             const response = await axios.post('https://academia-back.onrender.com/conciliacao', {
                 csvContent: content
